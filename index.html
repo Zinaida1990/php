@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Угадай число</title>
+</head>
+<body>
+    <h1>Компьютер угадывает ваше число</h1>
+    <form id="inputForm">
+        <label for="min">Минимальное значение:</label>
+        <input type="number" id="min" name="min" min="-999" max="999">
+        <br>
+        <label for="max">Максимальное значение:</label>
+        <input type="number" id="max" name="max" min="-999" max="999">
+        <br>
+        <button type="submit">Начать</button>
+    </form>
+    <p id="question">Компьютер угадал?</p>
+    <button id="lower">Меньше</button>
+    <button id="equal">Верно!</button>
+    <button id="greater">Больше</button>
+    <button id="restart">Загадать заново</button>
+
+    <script>
+        let min, max, attempts = 0;
+        const numberWords = ['ноль', 'один', 'два', 'три', 'четыре', 'пять', 'шесть', 'семь', 'восемь', 'девять',
+            'десять', 'одиннадцать', 'двенадцать', 'тринадцать', 'четырнадцать', 'пятнадцать', 'шестнадцать',
+            'семнадцать', 'восемнадцать', 'девятнадцать'];
+
+        function guessNumber() {
+            attempts++;
+            let guess = Math.floor((min + max) / 2);
+            let questionText = `Компьютер предполагает, что ваше число ${toWords(guess)}?`;
+            document.querySelector("#question").textContent = questionText;
+        }
+
+        function toWords(number) {
+            if (number >= 0 && number <= 19) {
+                return numberWords[number];
+            } else if (number >= 20 && number <= 99) {
+                let tens = numberWords[Math.floor(number / 10)];
+                let ones = number % 10 === 0 ? '' : numberWords[number % 10];
+                return `${tens} ${ones}`;
+            } else {
+                return number;
+            }
+        }
+
+        document.querySelector("#inputForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            min = parseInt(document.querySelector("#min").value) || -999;
+            max = parseInt(document.querySelector("#max").value) || 999;
+            if (min > 999) min = 999;
+            if (max > 999) max = 999;
+            if (min < -999) min = -999;
+            if (max < -999) max = -999;
+            attempts = 0;
+            guessNumber();
+        });
+
+        document.querySelector("#lower").addEventListener("click", function() {
+            max = Math.floor((min + max) / 2);
+            guessNumber();
+        });
+
+        document.querySelector("#equal").addEventListener("click", function() {
+            alert(`Компьютер угадал ваше число "${toWords((min + max) / 2)}" с ${attempts} попыток!`);
+        });
+
+        document.querySelector("#greater").addEventListener("click", function() {
+            min = Math.floor((min + max) / 2);
+            guessNumber();
+        });
+
+        document.querySelector("#restart").addEventListener("click", function() {
+            document.querySelector("#min").value = '';
+            document.querySelector("#max").value = '';
+            document.querySelector("#question").textContent = 'Компьютер угадал?';
+        });
+    </script>
+</body>
+</html>
